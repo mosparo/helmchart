@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    katenary.v3/compose-hash: f7e37491abe3220deeb5961e7dd0075983ee7cb0
+    katenary.v3/version: develop-4367a01
+  labels:
+    {{- include "mosparo.labels" . | nindent 4 }}
+    katenary.v3/component: db
+  name: '{{ include "mosparo.fullname" . }}-db'
+spec:
+  replicas: {{ .Values.db.replicas }}
+  selector:
+    matchLabels:
+      {{- include "mosparo.selectorLabels" . | nindent 6 }}
+      katenary.v3/component: db
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "mosparo.selectorLabels" . | nindent 8 }}
+        katenary.v3/component: db
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: '{{ include "mosparo.fullname" . }}-db'
+        - secretRef:
+            name: '{{ include "mosparo.fullname" . }}-db'
+        image: '{{ tpl .Values.db.repository.image $ }}:{{ tpl .Values.db.repository.tag $ | default "latest" }}'
+        imagePullPolicy: {{ .Values.db.imagePullPolicy }}
+        name: db
+        ports:
+        - containerPort: 3306
+          name: mysql
+        {{- if .Values.db.resources }}
+        resources:
+          {{ .Values.db.resources | toYaml | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        {{- if .Values.db.persistence.dbdata.enabled }}
+        - mountPath: /var/lib/mysql
+          name: dbdata
+        {{- end }}
+      {{- if .Values.pullSecrets }}
+      imagePullSecrets:
+      {{- .Values.pullSecrets | toYaml | nindent 6 }}
+      {{- end }}
+      {{- if .Values.db.nodeSelector }}
+      nodeSelector:
+        {{- .Values.db.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if ne .Values.db.serviceAccount "" }}
+      serviceAccountName: {{ .Values.db.serviceAccount | quote }}
+      {{- end }}
+      volumes:
+      {{- if .Values.db.persistence.dbdata.enabled }}
+      - name: dbdata
+        persistentVolumeClaim:
+          claimName: '{{ include "mosparo.fullname" . }}-db-dbdata'
+      {{- end }}
+# vim: ft=helm.gotmpl.yaml

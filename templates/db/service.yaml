@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    katenary.v3/compose-hash: f7e37491abe3220deeb5961e7dd0075983ee7cb0
+    katenary.v3/version: develop-4367a01
+  labels:
+    {{- include "mosparo.labels" . | nindent 4 }}
+    katenary.v3/component: db
+  name: '{{ include "mosparo.fullname" . }}-db'
+spec:
+  ports:
+  - name: mysql
+    port: 3306
+    protocol: TCP
+    targetPort: mysql
+  selector:
+    {{- include "mosparo.selectorLabels" . | nindent 4 }}
+    katenary.v3/component: db
+# vim: ft=helm.gotmpl.yaml

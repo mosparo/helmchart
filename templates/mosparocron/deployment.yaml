@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    katenary.v3/compose-hash: f7e37491abe3220deeb5961e7dd0075983ee7cb0
+    katenary.v3/version: develop-4367a01
+  labels:
+    {{- include "mosparo.labels" . | nindent 4 }}
+    katenary.v3/component: mosparocron
+  name: '{{ include "mosparo.fullname" . }}-mosparocron'
+spec:
+  replicas: {{ .Values.mosparocron.replicas }}
+  selector:
+    matchLabels:
+      {{- include "mosparo.selectorLabels" . | nindent 6 }}
+      katenary.v3/component: mosparocron
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "mosparo.selectorLabels" . | nindent 8 }}
+        katenary.v3/component: mosparocron
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: '{{ include "mosparo.fullname" . }}-mosparocron'
+        image: '{{ tpl .Values.mosparocron.repository.image $ }}:{{ tpl .Values.mosparocron.repository.tag $ | default "latest" }}'
+        imagePullPolicy: {{ .Values.mosparocron.imagePullPolicy }}
+        name: mosparocron
+        {{- if .Values.mosparocron.resources }}
+        resources:
+          {{ .Values.mosparocron.resources | toYaml | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        {{- if .Values.mosparocron.persistence.mosparodata.enabled }}
+        - mountPath: /mosparo-data
+          name: mosparodata
+        {{- end }}
+      {{- if .Values.pullSecrets }}
+      imagePullSecrets:
+      {{- .Values.pullSecrets | toYaml | nindent 6 }}
+      {{- end }}
+      {{- if .Values.mosparocron.nodeSelector }}
+      nodeSelector:
+        {{- .Values.mosparocron.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if ne .Values.mosparocron.serviceAccount "" }}
+      serviceAccountName: {{ .Values.mosparocron.serviceAccount | quote }}
+      {{- end }}
+      volumes:
+      {{- if .Values.mosparocron.persistence.mosparodata.enabled }}
+      - name: mosparodata
+        persistentVolumeClaim:
+          claimName: '{{ include "mosparo.fullname" . }}-mosparoweb-mosparodata'
+      {{- end }}
+# vim: ft=helm.gotmpl.yaml

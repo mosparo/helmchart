@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    katenary.v3/compose-hash: f7e37491abe3220deeb5961e7dd0075983ee7cb0
+    katenary.v3/version: develop-4367a01
+  labels:
+    {{- include "mosparo.labels" . | nindent 4 }}
+    katenary.v3/component: mosparoweb
+  name: '{{ include "mosparo.fullname" . }}-mosparoweb'
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  selector:
+    {{- include "mosparo.selectorLabels" . | nindent 4 }}
+    katenary.v3/component: mosparoweb
+# vim: ft=helm.gotmpl.yaml
