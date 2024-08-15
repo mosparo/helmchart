@@ -1,0 +1,23 @@
+{{- if .Values.mosparoweb.persistence.mosparodata.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    katenary.v3/compose-hash: f7e37491abe3220deeb5961e7dd0075983ee7cb0
+    katenary.v3/version: develop-4367a01
+  labels:
+    {{- include "mosparo.labels" . | nindent 4 }}
+    katenary.v3/component: mosparoweb
+  name: '{{ include "mosparo.fullname" . }}-mosparoweb-mosparodata'
+spec:
+  accessModes:
+  {{- .Values.mosparoweb.persistence.mosparodata.accessMode | toYaml | nindent 2 }}
+  resources:
+    requests:
+      storage: {{ tpl .Values.mosparoweb.persistence.mosparodata.size $ }}
+  {{- if ne .Values.mosparoweb.persistence.mosparodata.storageClass "-" }}
+  storageClassName: '{{ .Values.mosparoweb.persistence.mosparodata.storageClass }}'
+  {{- end }}
+
+# vim: ft=helm.gotmpl.yaml
+{{- end }}

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    katenary.v3/compose-hash: f7e37491abe3220deeb5961e7dd0075983ee7cb0
+    katenary.v3/version: develop-4367a01
+  labels:
+    {{- include "mosparo.labels" . | nindent 4 }}
+    katenary.v3/component: mosparoweb
+  name: '{{ include "mosparo.fullname" . }}-mosparoweb'
+spec:
+  replicas: {{ .Values.mosparoweb.replicas }}
+  selector:
+    matchLabels:
+      {{- include "mosparo.selectorLabels" . | nindent 6 }}
+      katenary.v3/component: mosparoweb
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "mosparo.selectorLabels" . | nindent 8 }}
+        katenary.v3/component: mosparoweb
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: '{{ include "mosparo.fullname" . }}-mosparoweb'
+        image: '{{ tpl .Values.mosparoweb.repository.image $ }}:{{ tpl .Values.mosparoweb.repository.tag $ | default "latest" }}'
+        imagePullPolicy: {{ .Values.mosparoweb.imagePullPolicy }}
+        name: mosparoweb
+        ports:
+        - containerPort: 80
+          name: http
+        {{- if .Values.mosparoweb.resources }}
+        resources:
+          {{ .Values.mosparoweb.resources | toYaml | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        {{- if .Values.mosparoweb.persistence.mosparodata.enabled }}
+        - mountPath: /mosparo-data
+          name: mosparodata
+        {{- end }}
+      {{- if .Values.pullSecrets }}
+      imagePullSecrets:
+      {{- .Values.pullSecrets | toYaml | nindent 6 }}
+      {{- end }}
+      {{- if .Values.mosparoweb.nodeSelector }}
+      nodeSelector:
+        {{- .Values.mosparoweb.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if ne .Values.mosparoweb.serviceAccount "" }}
+      serviceAccountName: {{ .Values.mosparoweb.serviceAccount | quote }}
+      {{- end }}
+      volumes:
+      {{- if .Values.mosparoweb.persistence.mosparodata.enabled }}
+      - name: mosparodata
+        persistentVolumeClaim:
+          claimName: '{{ include "mosparo.fullname" . }}-mosparoweb-mosparodata'
+      {{- end }}
+# vim: ft=helm.gotmpl.yaml
