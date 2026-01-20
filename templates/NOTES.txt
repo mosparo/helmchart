@@ -25,13 +25,7 @@ You can see this notes again by running:
 {{- $count := 0 -}}
 {{- $listOfURL := "" -}}
 {{- if and .Values.mosparoweb.ingress .Values.mosparoweb.ingress.enabled }}
-{{- $count = add1 $count -}}{{- $listOfURL = printf "%s\n- http://%s" $listOfURL .Values.mosparoweb.ingress.host -}}
-{{- end }}
-{{- if and .Values.mosparocron.ingress .Values.mosparocron.ingress.enabled }}
-{{- $count = add1 $count -}}{{- $listOfURL = printf "%s\n- http://%s" $listOfURL .Values.mosparocron.ingress.host -}}
-{{- end }}
-{{- if and .Values.db.ingress .Values.db.ingress.enabled }}
-{{- $count = add1 $count -}}{{- $listOfURL = printf "%s\n- http://%s" $listOfURL .Values.db.ingress.host -}}
+{{- $count = add1 $count -}}{{- $listOfURL = printf "%s\n- https://%s" $listOfURL .Values.mosparoweb.ingress.host -}}
 {{- end }}
 {{- if gt $count 0 }}
 
@@ -45,3 +39,20 @@ You can get these urls with kubectl:
 {{- end }}
 
 Thanks for using Helm!
+
+
+SETUP
+=====
+On first run enter those db credentials:
+
+Host: {{ .Release.Name }}-db
+Port: 3306
+Db Name: mosparo
+User: mosparo
+Pass: mosparo_password
+
+Then in [Administration/GeoIP2](https://captcha.vapolia.eu/administration/geoip2/), 
+enter the API keys of your free [maxmind account](https://www.maxmind.com/en/accounts/xxxxx/license-key/create)
+
+Note: CRON Jobs are already activated. Ignore the setup in bith GeoIP2 and Administration/Cron Jobs.  
+See [cron jobs](https://github.com/mosparo/mosparo/blob/master/docker/standard/config/mosparo.cron) for details.

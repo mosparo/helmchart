@@ -16,7 +16,7 @@ db:
     # key: db.repository.image
     image: mariadb
     # key: db.repository.tag
-    tag: "10.10"
+    tag: "11.4"
   # key: db.persistence
   persistence:
     # key: db.persistence.dbdata
@@ -72,59 +72,6 @@ db:
   # key: db.networkPolicy
   networkPolicy:
     enabled: true
-
-# mosparocron configuration
-mosparocron:
-  # key: mosparocron.repository
-  repository:
-    # key: mosparocron.repository.image
-    image: mosparo/mosparo
-    # key: mosparocron.repository.tag
-    tag: latest
-  # key: mosparocron.persistence
-  persistence:
-    # key: mosparocron.persistence.mosparodata
-    mosparodata:
-      # Storage class to use for PVCs
-      # storageClass: "-" means use default
-      # storageClass: "" means do not specify
-      # storageClass: "foo" means use that storageClass
-      # key: mosparocron.persistence.mosparodata.storageClass
-      # storageClass: '-'
-      # key: mosparocron.persistence.mosparodata.size
-      # size: 1Gi
-      # key: mosparocron.persistence.mosparodata.accessMode
-      # accessMode:
-        # - ReadWriteMany
-      # key: mosparocron.persistence.mosparodata.enabled
-      enabled: true
-  # key: mosparocron.replicas
-  replicas: 1
-  # key: mosparocron.nodeSelector
-  nodeSelector: {}
-  # Resources allows you to specify the resource requests and limits for a service.
-  # Resources are used to specify the amount of CPU and memory that 
-  # a container needs.
-  #
-  # e.g.
-  # resources:
-  #   requests:
-  #     memory: "64Mi"
-  #     cpu: "250m"
-  #   limits:
-  #     memory: "128Mi"
-  #     cpu: "500m"
-  # key: mosparocron.resources
-  resources: {}
-  # imagePullPolicy allows you to specify a policy to cache or always pull an image.
-  # You must provide a string value with one of the following values:
-  # - Always       -> will always pull the image
-  # - Never        -> will never pull the image, the image should be present on the node
-  # - IfNotPresent -> will pull the image only if it is not present on the node
-  # key: mosparocron.imagePullPolicy
-  imagePullPolicy: Always
-  # key: mosparocron.serviceAccount
-  serviceAccount: ""
 
 # mosparoweb configuration
 mosparoweb:

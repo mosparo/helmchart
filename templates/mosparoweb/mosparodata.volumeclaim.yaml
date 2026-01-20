@@ -1,4 +1,4 @@
-{{- if .Values.mosparoweb.persistence.mosparodata.enabled }}
+{{- if and .Values.mosparoweb.persistence.mosparodata.enabled (not .Values.mosparoweb.persistence.mosparodata.existingClaim) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
