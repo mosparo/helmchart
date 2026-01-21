@@ -36,9 +36,6 @@ spec:
           {{ .Values.mosparoweb.resources | toYaml | nindent 10 }}
         {{- end }}
         volumeMounts:
-        - mountPath: /usr/bin/run
-          name: run-script
-          subPath: run
         {{- if .Values.mosparoweb.persistence.mosparodata.enabled }}
         - mountPath: /mosparo-data
           name: mosparodata
@@ -55,10 +52,6 @@ spec:
       serviceAccountName: {{ .Values.mosparoweb.serviceAccount | quote }}
       {{- end }}
       volumes:
-      - name: run-script
-        configMap:
-          name: '{{ include "mosparo.fullname" . }}-mosparoweb-run-script'
-          defaultMode: 0755
       {{- if .Values.mosparoweb.persistence.mosparodata.enabled }}
       - name: mosparodata
         persistentVolumeClaim:
