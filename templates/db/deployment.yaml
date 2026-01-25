@@ -29,6 +29,7 @@ spec:
             name: '{{ include "mosparo.fullname" . }}-db'
         image: '{{ tpl .Values.db.repository.image $ }}:{{ tpl .Values.db.repository.tag $ | default "latest" }}'
         imagePullPolicy: {{ .Values.db.imagePullPolicy }}
+        args: ['--default-authentication-plugin=mysql_native_password']
         name: db
         ports:
         - containerPort: 3306

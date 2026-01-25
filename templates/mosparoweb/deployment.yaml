@@ -55,6 +55,6 @@ spec:
       {{- if .Values.mosparoweb.persistence.mosparodata.enabled }}
       - name: mosparodata
         persistentVolumeClaim:
-          claimName: '{{ include "mosparo.fullname" . }}-mosparoweb-mosparodata'
+          claimName: '{{ .Values.mosparoweb.persistence.mosparodata.existingClaim | default (printf "%s-mosparoweb-mosparodata" (include "mosparo.fullname" .)) }}'
       {{- end }}
 # vim: ft=helm.gotmpl.yaml
