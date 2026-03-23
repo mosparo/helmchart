@@ -1,0 +1,23 @@
+{{- if .Values.db.persistence.dbdata.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    katenary.v3/compose-hash: f7e37491abe3220deeb5961e7dd0075983ee7cb0
+    katenary.v3/version: develop-4367a01
+  labels:
+    {{- include "mosparo.labels" . | nindent 4 }}
+    katenary.v3/component: db
+  name: '{{ include "mosparo.fullname" . }}-db-dbdata'
+spec:
+  accessModes:
+  {{- .Values.db.persistence.dbdata.accessMode | toYaml | nindent 2 }}
+  resources:
+    requests:
+      storage: {{ tpl .Values.db.persistence.dbdata.size $ }}
+  {{- if ne .Values.db.persistence.dbdata.storageClass "-" }}
+  storageClassName: '{{ .Values.db.persistence.dbdata.storageClass }}'
+  {{- end }}
+
+# vim: ft=helm.gotmpl.yaml
+{{- end }}

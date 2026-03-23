@@ -1,0 +1,29 @@
+{{- if .Values.db.networkPolicy.enabled -}}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  annotations:
+    katenary.v3/compose-hash: f7e37491abe3220deeb5961e7dd0075983ee7cb0
+    katenary.v3/version: develop-4367a01
+  labels:
+    {{- include "mosparo.labels" . | nindent 4 }}
+    katenary.v3/component: db
+  name: '{{ include "mosparo.fullname" . }}-db'
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "mosparo.selectorLabels" . | nindent 6 }}
+      katenary.v3/component: db
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          {{- include "mosparo.selectorLabels" . | nindent 10 }}
+    ports:
+    - protocol: TCP
+      port: 3306
+  policyTypes:
+    - Ingress
+
+# vim: ft=helm.gotmpl.yaml
+{{- end }}
