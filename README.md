@@ -9,9 +9,11 @@ This chart was created from the docker-compose.yaml example with the great tool 
 Add the mosparo Helm repository to your local Helm installation:
 
 ```bash
-helm repo add mosparo https://mosparo.github.io/helmchart
+helm repo add mosparo https://helm.mosparo.io
 helm repo update
 ```
+
+_The Helm repository is hosted on GitHub Pages._
 
 ## Installing the Chart
 
