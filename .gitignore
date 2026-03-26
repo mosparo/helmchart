@@ -1,6 +1,5 @@
 # Helm
 *.tgz
-charts/
 *.lock
 
 # IDE
