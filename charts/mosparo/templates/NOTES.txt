@@ -22,19 +22,22 @@ You can see this notes again by running:
 
   $ helm -n {{ .Release.Namespace }} get notes {{ .Release.Name }}
 
-{{- $count := 0 -}}
 {{- $listOfURL := "" -}}
-{{- if and .Values.mosparoweb.ingress .Values.mosparoweb.ingress.enabled }}
-{{- $count = add1 $count -}}{{- $listOfURL = printf "%s\n- https://%s" $listOfURL .Values.mosparoweb.ingress.host -}}
+{{- if eq .Values.mosparoweb.expose.type "ingress" }}
+{{- $listOfURL = printf "%s\n- https://%s" $listOfURL .Values.mosparoweb.expose.ingress.host -}}
+{{- else if eq .Values.mosparoweb.expose.type "route" }}
+{{- range .Values.mosparoweb.expose.route.hostnames }}
+{{- $listOfURL = printf "%s\n- https://%s" $listOfURL . -}}
 {{- end }}
-{{- if gt $count 0 }}
+{{- end }}
+{{- if $listOfURL }}
 
-# List of activated ingresses URL:
+# Exposed URLs:
 {{ $listOfURL }}
 
-You can get these urls with kubectl:
+You can list the exposing resources with kubectl:
 
-    kubeclt get ingress -n {{ .Release.Namespace }}
+    kubectl get ingress,httproute -n {{ .Release.Namespace }}
 
 {{- end }}
 

@@ -98,24 +98,45 @@ mosparoweb:
         - ReadWriteMany
       # key: mosparoweb.persistence.mosparodata.enabled
       enabled: true
-  # Default value for ingress.class annotation
-  # class: "-"
-  # If the value is "-", controller will not set ingressClassName
-  # If the value is "", Ingress will be set to an empty string, so
-  # controller will use the default value for ingressClass
-  # If the value is specified, controller will set the named class e.g. "nginx"
-  # key: mosparoweb.ingress
-  ingress:
-    # key: mosparoweb.ingress.annotations
-    annotations: {}
-    # key: mosparoweb.ingress.host
-    host: #! your alias
-    # key: mosparoweb.ingress.path
-    path: /
-    # key: mosparoweb.ingress.class
-    class: '-'
-    # key: mosparoweb.ingress.enabled
-    enabled: true
+  # How mosparoweb is exposed outside the cluster.
+  # expose.type selects the resource that will be created:
+  #   - ingress : create a networking.k8s.io/v1 Ingress (default, uses expose.ingress)
+  #   - route   : create a gateway.networking.k8s.io/v1 HTTPRoute (uses expose.route)
+  #   - none    : do not create any external-facing resource
+  expose:
+    # key: mosparoweb.expose.type
+    type: ingress
+
+    # Ingress configuration (used when expose.type == "ingress")
+    # class behaviour:
+    #   "-" -> controller will not set ingressClassName
+    #   ""  -> ingressClassName set to empty string, controller uses its default
+    #   any other value -> used as ingressClassName (e.g. "nginx")
+    ingress:
+      # key: mosparoweb.expose.ingress.annotations
+      annotations: {}
+      # key: mosparoweb.expose.ingress.host
+      host: #! your alias
+      # key: mosparoweb.expose.ingress.path
+      path: /
+      # key: mosparoweb.expose.ingress.class
+      class: '-'
+
+    # HTTPRoute configuration (used when expose.type == "route")
+    # Requires the Gateway API CRDs to be installed in the cluster.
+    route:
+      # key: mosparoweb.expose.route.annotations
+      annotations: {}
+      # parentRefs: list of Gateways this route attaches to
+      # key: mosparoweb.expose.route.parentRefs
+      parentRefs: []
+      #  - name: public
+      #    namespace: gateway-system
+      #    sectionName: https
+      # hostnames served by this route
+      # key: mosparoweb.expose.route.hostnames
+      hostnames: []
+      #  - "mosparo.example.com"
   # key: mosparoweb.replicas
   replicas: 1
   # key: mosparoweb.nodeSelector

@@ -1,23 +1,23 @@
-{{- if .Values.mosparoweb.ingress.enabled -}}
+{{- if eq .Values.mosparoweb.expose.type "ingress" -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
     katenary.v3/compose-hash: f7e37491abe3220deeb5961e7dd0075983ee7cb0
     katenary.v3/version: develop-4367a01
-    {{- if .Values.mosparoweb.ingress.annotations -}}
-        {{- toYaml .Values.mosparoweb.ingress.annotations | nindent 4 }}
+    {{- if .Values.mosparoweb.expose.ingress.annotations -}}
+        {{- toYaml .Values.mosparoweb.expose.ingress.annotations | nindent 4 }}
     {{- end }}
   labels:
     {{- include "mosparo.labels" . | nindent 4 }}
     katenary.v3/component: mosparoweb
   name: '{{ include "mosparo.fullname" . }}-mosparoweb'
 spec:
-  {{- if ne .Values.mosparoweb.ingress.class "-" }}
-  ingressClassName: '{{ tpl .Values.mosparoweb.ingress.class $ }}'
+  {{- if ne .Values.mosparoweb.expose.ingress.class "-" }}
+  ingressClassName: '{{ tpl .Values.mosparoweb.expose.ingress.class $ }}'
   {{- end }}
   rules:
-  - host: '{{ tpl .Values.mosparoweb.ingress.host $ }}'
+  - host: '{{ tpl .Values.mosparoweb.expose.ingress.host $ }}'
     http:
       paths:
       - backend:
@@ -25,11 +25,11 @@ spec:
             name: '{{ include "mosparo.fullname" . }}-mosparoweb'
             port:
               name: http
-        path: '{{ tpl .Values.mosparoweb.ingress.path $ }}'
+        path: '{{ tpl .Values.mosparoweb.expose.ingress.path $ }}'
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - '{{ tpl .Values.mosparoweb.ingress.host . }}'
+    - '{{ tpl .Values.mosparoweb.expose.ingress.host . }}'
     secretName: '{{ include "mosparo.fullname" . }}-mosparoweb-tls'
 
 # vim: ft=helm.gotmpl.yaml
