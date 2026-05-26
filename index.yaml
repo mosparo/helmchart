@@ -3,6 +3,15 @@ entries:
   mosparo:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2026-05-26T17:20:17.918343119Z"
+    description: A Helm chart for mosparo
+    digest: 1683720ed7f039024e281451b529a43f0f877707c64615862b890a18b8aab741
+    name: mosparo
+    urls:
+    - https://github.com/mosparo/helmchart/releases/download/mosparo-0.4.0/mosparo-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2026-03-26T18:20:47.079129101Z"
     description: A Helm chart for mosparo
     digest: b97039b52e1494991c5aa897a46ab03028e921ea7cd11582873be107a434c964
@@ -19,4 +28,4 @@ entries:
     urls:
     - https://github.com/mosparo/helmchart/releases/download/mosparo-0.3.0/mosparo-0.3.0.tgz
     version: 0.3.0
-generated: "2026-03-26T18:20:47.079136685Z"
+generated: "2026-05-26T17:20:17.918355583Z"
