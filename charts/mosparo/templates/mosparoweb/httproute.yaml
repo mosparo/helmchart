@@ -1,0 +1,27 @@
+{{- if eq .Values.mosparoweb.expose.type "route" -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  {{- with .Values.mosparoweb.expose.route.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mosparo.labels" . | nindent 4 }}
+    katenary.v3/component: mosparoweb
+  name: '{{ include "mosparo.fullname" . }}-mosparoweb'
+spec:
+  parentRefs:
+    {{- toYaml .Values.mosparoweb.expose.route.parentRefs | nindent 4 }}
+  {{- with .Values.mosparoweb.expose.route.hostnames }}
+  hostnames:
+    {{- range . }}
+    - '{{ tpl . $ }}'
+    {{- end }}
+  {{- end }}
+  rules:
+    - backendRefs:
+        - name: '{{ include "mosparo.fullname" . }}-mosparoweb'
+          port: 80
+# vim: ft=helm.gotmpl.yaml
+{{- end }}

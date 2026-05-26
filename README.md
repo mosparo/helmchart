@@ -32,6 +32,41 @@ helm upgrade --install my-release mosparo/mosparo -f my-values.yaml
 
 See the [Helm documentation](https://helm.sh/docs/intro/using_helm/) for more information on installing and managing the chart.
 
+## Upgrading
+
+### 0.3.x -> 0.4.0 (breaking change)
+
+The `mosparoweb.ingress` block has been moved under a new `mosparoweb.expose` node
+to allow switching between a Kubernetes `Ingress` and a Gateway API `HTTPRoute`.
+
+Migration:
+
+| Old (<= 0.3.x)                        | New (>= 0.4.0)                             |
+|---------------------------------------|--------------------------------------------|
+| `mosparoweb.ingress.enabled: true`    | `mosparoweb.expose.type: ingress` (default)|
+| `mosparoweb.ingress.enabled: false`   | `mosparoweb.expose.type: none`             |
+| `mosparoweb.ingress.host`             | `mosparoweb.expose.ingress.host`           |
+| `mosparoweb.ingress.path`             | `mosparoweb.expose.ingress.path`           |
+| `mosparoweb.ingress.class`            | `mosparoweb.expose.ingress.class`          |
+| `mosparoweb.ingress.annotations`      | `mosparoweb.expose.ingress.annotations`    |
+
+To use a Gateway API `HTTPRoute` instead of an `Ingress`:
+
+```yaml
+mosparoweb:
+  expose:
+    type: route
+    route:
+      parentRefs:
+        - name: public
+          namespace: gateway-system
+          sectionName: https
+      hostnames:
+        - "mosparo.example.com"
+```
+
+Requires the Gateway API CRDs (`gateway.networking.k8s.io/v1`) to be installed in the cluster.
+
 ## Configuration
 
 See the values.yaml file for all configurable parameters.
@@ -51,11 +86,15 @@ The following table lists the configurable parameters of the mosparo chart and t
 | `db.repository.image`                                    | `mariadb`          |
 | `db.repository.tag`                                      | `10.10`            |
 | `db.serviceAccount`                                      | ``                 |
+| `mosparoweb.expose.type`                                 | `ingress`          |
+| `mosparoweb.expose.ingress.annotations`                  | `{}`               |
+| `mosparoweb.expose.ingress.class`                        | `-`                |
+| `mosparoweb.expose.ingress.host`                         | ``                 |
+| `mosparoweb.expose.ingress.path`                         | `/`                |
+| `mosparoweb.expose.route.annotations`                    | `{}`               |
+| `mosparoweb.expose.route.parentRefs`                     | `[]`               |
+| `mosparoweb.expose.route.hostnames`                      | `[]`               |
 | `mosparoweb.imagePullPolicy`                             | `Always`           |
-| `mosparoweb.ingress.class`                               | `-`                |
-| `mosparoweb.ingress.enabled`                             | `true`             |
-| `mosparoweb.ingress.host`                                | ``                 |
-| `mosparoweb.ingress.path`                                | `/`                |
 | `mosparoweb.persistence.mosparodata.accessMode[0].value` | `ReadWriteMany`    |
 | `mosparoweb.persistence.mosparodata.enabled`             | `true`             |
 | `mosparoweb.persistence.mosparodata.size`                | `1Gi`              |
